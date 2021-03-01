@@ -24,9 +24,11 @@ template <> struct SizeTypeIncrement<std::int16_t, std::uint16_t> { typedef std:
 template <> struct SizeTypeIncrement<std::uint32_t, std::uint32_t> { typedef std::uint32_t Type; };
 
 /*!
-	\brief 
-	\tparam T 
-	\tparam F 
+	\class FixedPoint
+	\brief Templated class to handle Fixed Point arithmetic 
+	\tparam T The number of total bits to represent the Fixed Point. This is limited to the 8, 16, and 32 bit options.
+				Using signed integers will result in signed fixed point and unsigned to unsigned fixed points.
+	\tparam F The number of fractional bits to have within the Fixed Point number
 */
 template<typename T, std::int8_t F>
 class FixedPoint
@@ -35,85 +37,92 @@ class FixedPoint
 	static_assert(F <= 31, "Fractional F may be not be larger than 31 bits");
 	static_assert(F > 0, "Fractional must be larger than zero");
 
-	/*!
-	*/
+	/*! Boolean indicator if the fixed point is signed or not */
 	static const bool S = std::numeric_limits<T>::is_signed;
 	
-	/*!
-	*/
+	/*! Numeric value of one in the templated fixed point format */
 	static const T ONE = 1 << F;
 
 public:
 	/*!
-		\brief 
+		\brief Default constructor. 
 	*/
 	FixedPoint() = default;
 
 	/*!
-		\brief 
-		\param value 
+		\brief Parameterised constructor. Converts a double to the fixed point format.
+		\param value The double to convert
 	*/
 	explicit FixedPoint(const double& value)
-		: _data(static_cast<T>(value* ONE))
+		: _data(static_cast<T>(value * ONE))
 	{}
 
 	/*!
-		\brief 
-		\param value 
+		\brief Parameterised constructor. Converts a float to the fixed point format.
+		\param value The float to convert
 	*/
 	explicit FixedPoint(const float& value)
-		: _data(static_cast<T>(value* ONE))
+		: _data(static_cast<T>(value * ONE))
 	{}
 
 	/*!
-		\brief 
-		\param value 
+		\brief Parameterised constructor. Converts a signed 8 bit value to the fixed point format.
+		\param value The signed 8 bit value to convert
 	*/
 	explicit FixedPoint(const std::int8_t& value)
-		: _data(static_cast<T>(value* ONE))
+		: _data(static_cast<T>(value * ONE))
 	{}
 
 	/*!
-		\brief 
-		\param value 
+		\brief Parameterised constructor. Converts a signed 16 bit value to the fixed point format.
+		\param value The signed 16 bit value to convert
 	*/
 	explicit FixedPoint(const std::int16_t& value)
-		: _data(static_cast<T>(value* ONE))
+		: _data(static_cast<T>(value * ONE))
 	{}
 
 	/*!
-		\brief 
-		\param value 
+		\brief Parameterised constructor. Converts a signed 32 bit value to the fixed point format.
+		\param value The signed 32 bit value to convert
 	*/
 	explicit FixedPoint(const std::int32_t& value)
-		: _data(static_cast<T>(value* ONE))
+		: _data(static_cast<T>(value * ONE))
 	{}
 
 	/*!
-		\brief 
-		\param value 
+		\brief Parameterised constructor. Converts a unsigned 8 bit value to the fixed point format.
+		\param value The unsigned 8 bit value to convert
 	*/
 	explicit FixedPoint(const std::uint8_t& value)
-		: _data(static_cast<T>(value* ONE))
+		: _data(static_cast<T>(value * ONE))
 	{}
 
 	/*!
-		\brief 
-		\param value 
+		\brief Parameterised constructor. Converts a unsigned 16 bit value to the fixed point format.
+		\param value The unsigned 16 bit value to convert
 	*/
 	explicit FixedPoint(const std::uint16_t& value)
-		: _data(static_cast<T>(value* ONE))
+		: _data(static_cast<T>(value * ONE))
 	{}
 
 	/*!
-		\brief 
-		\param value 
+		\brief Parameterised constructor. Converts a unsigned 32 bit value to the fixed point format.
+		\param value The unsigned 32 bit value to convert
 	*/
 	explicit FixedPoint(const std::uint32_t& value)
-		: _data(static_cast<T>(value* ONE))
+		: _data(static_cast<T>(value * ONE))
 	{}
 
+	/*!
+		\brief Static function to return the minimum value of the fixed point template
+		\returns A fixed point number corresponding to the minimum value 
+	*/
 	static FixedPoint<T, F> min();
+
+	/*!
+		\brief Static function to return the maximum value of the fixed point template
+		\returns A fixed point number corresponding to the maximum value
+	*/
 	static FixedPoint<T, F> max();
 
 	T raw() const { return _data; }
