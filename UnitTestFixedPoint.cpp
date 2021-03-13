@@ -21,7 +21,6 @@ namespace Lambda
 		Q4 = Number of Fractional Bits
 		-> 0000.0000
 
-
 		S16Q3
 		S = Signed
 		16 = Total Number of Bits
@@ -31,12 +30,12 @@ namespace Lambda
 		-> 0000 0000 0000 0.000
 	*/
 
-	TEST(FixedPoint, NumericLimitsU8Q4) /* TODO */
+	TEST(FixedPoint, NumericLimitsU8Q4)
 	{
-		typedef FixedPoint<std::uint8_t, static_cast<std::int8_t>(4)> FixedPoint;
+		typedef FixedPoint<std::uint8_t, 4> FixedPoint;
 
 		EXPECT_TRUE(std::numeric_limits<FixedPoint>::is_specialized);
-		//EXPECT_EQ(FixedPoint(0), std::numeric_limits<FixedPoint>::min());
+		EXPECT_EQ(FixedPoint(0), std::numeric_limits<FixedPoint>::min());
 		//EXPECT_EQ(FixedPoint(0), std::numeric_limits<FixedPoint>::max());
 		//EXPECT_EQ(FixedPoint(0), std::numeric_limits<FixedPoint>::lowest());
 
@@ -90,12 +89,23 @@ namespace Lambda
 		EXPECT_FALSE(u8_c == u8_a);
 	}
 
+	TEST(FixedPoint, FixedPointCreation)
+	{
+		FixedPoint<std::uint8_t, 4> u8_f4_a = FixedPoint<std::uint8_t, 4>::createFixedPoint(3);
+		FixedPoint<std::uint8_t, 4> u8_f4_b(3);
+		EXPECT_EQ(u8_f4_a, u8_f4_b);
+
+		FixedPoint<std::int16_t, 4> s16_f4_a = FixedPoint<std::int16_t, 4>::createFixedPoint(-67);
+		FixedPoint<std::int16_t, 4> s16_f4_b(-67);
+		EXPECT_EQ(s16_f4_a, s16_f4_b);
+	}
+
 	TEST(FixedPoint, Conversion)
 	{
 		std::uint8_t u8_a(4);
 		std::uint8_t u8_b(8);
-		std::uint8_t u8_c = FixedPoint<std::uint8_t, 4>::convertType<std::uint8_t, std::uint8_t>(u8_a, 1);
-		std::uint8_t u8_d = FixedPoint<std::uint8_t, 4>::convertType<std::uint8_t, std::uint8_t>(u8_a, 0);
+		auto u8_c = FixedPoint<std::uint8_t, 4>::convertType<std::uint8_t, std::uint8_t>(u8_a, 1);
+		auto u8_d = FixedPoint<std::uint8_t, 4>::convertType<std::uint8_t, std::uint8_t>(u8_a, 0);
 		EXPECT_EQ(u8_b, u8_c);
 		EXPECT_EQ(u8_a, u8_d);
 
@@ -107,13 +117,10 @@ namespace Lambda
 		std::int16_t s16_b(32);
 		EXPECT_EQ(s16_a, s16_b);
 
-		/*
-		FixedPoint<std::uint8_t, 4> u8_a(std::int8_t(4));
-		FixedPoint<std::uint8_t, 6> u8_b(std::int8_t(4));
-		FixedPoint<std::uint8_t, 4> u8_c = u8_b.convert<std::uint8_t, 4>();
-
-		EXPECT_EQ(u8_a, u8_c);
-		 */
+		FixedPoint<std::uint8_t, 4> u8_f4(5);
+		FixedPoint<std::uint16_t, 4> u16_f4_a(5);
+		FixedPoint<std::uint16_t, 4> u16_f4_b = u8_f4.convert<std::uint16_t, 4>();
+		EXPECT_EQ(u16_f4_a, u16_f4_b);
 	}
 
 	TEST(FixedPoint, NumericLimits16Bit) /* TODO */

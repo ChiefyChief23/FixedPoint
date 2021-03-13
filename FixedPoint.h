@@ -190,10 +190,10 @@ public:
 	bool operator>=(const FixedPoint &rhs) const;
 
 	/*!
-		\brief
-		\tparam U
-		\tparam G
-		\return
+		\brief Converts the FixedPoint to a completely different type and resolution
+		\tparam U The new data type to convert the raw data to
+		\tparam G The new fractional amount to convert the new Fixed point to
+		\returns A new FixedPoint number of base data type U and fractional amount G
 	*/
 	template <typename U, std::int8_t G>
 	FixedPoint<U, G> convert() const;
@@ -366,7 +366,7 @@ template <typename U, std::int8_t G>
 FixedPoint<U, G> FixedPoint<T, F>::convert() const
 {
 	std::int8_t fractional = G - F;
-	return FixedPoint<U, G>::createFixedPoint(convertType<T, U>(_data, fractional));
+	return FixedPoint<U, G>::createFixedPoint(FixedPoint<T, F>::convertType<T, U>(_data, fractional));
 }
 
 template <typename T, std::int8_t F>
@@ -394,7 +394,7 @@ bool FixedPoint<T, F>::operator==(const FixedPoint &rhs) const
 template<typename T, std::int8_t F>
 bool FixedPoint<T, F>::operator!=(const FixedPoint &rhs) const
 {
-	return !(rhs == *this);
+	return rhs != *this;
 }
 
 template<typename T, std::int8_t F>
@@ -412,13 +412,13 @@ bool FixedPoint<T, F>::operator>(const FixedPoint &rhs) const
 template<typename T, std::int8_t F>
 bool FixedPoint<T, F>::operator<=(const FixedPoint &rhs) const
 {
-	return !(rhs < *this);
+	return rhs >= *this;
 }
 
 template<typename T, std::int8_t F>
 bool FixedPoint<T, F>::operator>=(const FixedPoint &rhs) const
 {
-	return !(*this < rhs);
+	return *this >= rhs;
 }
 
 namespace std
@@ -427,11 +427,26 @@ namespace std
 	class numeric_limits<FixedPoint<T, F>>
 	{
 	public:
-		static constexpr bool is_specialized = true;
-		static constexpr FixedPoint<T, F> min() noexcept { return FixedPoint<T, F>::min(); }
-		static constexpr T max() noexcept { return T(); }
-		static constexpr T lowest() noexcept { return T(); }
+		static constexpr FixedPoint<T, F> min() noexcept
+		{
+			if (std::numeric_limits<T>::is_signed)
+			{
+				return FixedPoint<T, F>(0); /* TODO */
+			}
+			else
+			{
+				return FixedPoint<T, F>(0);
+			}
+		}
 
+		static constexpr T max() noexcept
+		{
+			return T(0);
+		}
+
+		static constexpr T lowest() noexcept { return min(); }
+
+		static constexpr bool is_specialized = true;
 		static constexpr int  digits = 0;
 		static constexpr int  digits10 = 0;
 		static constexpr bool is_signed = false;
