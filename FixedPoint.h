@@ -1,13 +1,20 @@
+/*!
+ *  \file FixedPoint.h
+ */
+
 #pragma once
+
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
+
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "modernize-use-nodiscard"
 
 #include <cstdint>
 #include <limits>
 #include <bitset>
 #include <iostream>
 #include <cmath>
-
-// ReSharper disable CppRedundantParentheses
-// ReSharper disable CppInconsistentNaming
 
 template <typename T> struct SignedSelector { typedef std::int64_t Type; };
 template <> struct SignedSelector<std::int8_t> { typedef std::uint8_t Type; };
@@ -25,7 +32,7 @@ template <> struct SizeTypeIncrement<std::uint32_t, std::uint32_t> { typedef std
 
 /*!
 	\class FixedPoint
-	\brief Templated class to handle Fixed Point arithmetic 
+	\brief Templated class to handle Fixed Point arithmetic
 	\tparam T The number of total bits to represent the Fixed Point. This is limited to the 8, 16, and 32 bit options.
 				Using signed integers will result in signed fixed point and unsigned to unsigned fixed points.
 	\tparam F The number of fractional bits to have within the Fixed Point number
@@ -39,13 +46,13 @@ class FixedPoint
 
 	/*! Boolean indicator if the fixed point is signed or not */
 	static const bool S = std::numeric_limits<T>::is_signed;
-	
+
 	/*! Numeric value of one in the templated fixed point format */
 	static const T ONE = 1 << F;
 
 public:
 	/*!
-		\brief Default constructor. 
+		\brief Default constructor.
 	*/
 	FixedPoint() = default;
 
@@ -54,7 +61,7 @@ public:
 		\param value The double to convert
 	*/
 	explicit FixedPoint(const double& value)
-		: _data(static_cast<T>(value * ONE))
+			: _data(static_cast<T>(value * ONE))
 	{}
 
 	/*!
@@ -62,7 +69,7 @@ public:
 		\param value The float to convert
 	*/
 	explicit FixedPoint(const float& value)
-		: _data(static_cast<T>(value * ONE))
+			: _data(static_cast<T>(value * ONE))
 	{}
 
 	/*!
@@ -70,7 +77,7 @@ public:
 		\param value The signed 8 bit value to convert
 	*/
 	explicit FixedPoint(const std::int8_t& value)
-		: _data(static_cast<T>(value * ONE))
+			: _data(static_cast<T>(value * ONE))
 	{}
 
 	/*!
@@ -78,7 +85,7 @@ public:
 		\param value The signed 16 bit value to convert
 	*/
 	explicit FixedPoint(const std::int16_t& value)
-		: _data(static_cast<T>(value * ONE))
+			: _data(static_cast<T>(value * ONE))
 	{}
 
 	/*!
@@ -86,7 +93,7 @@ public:
 		\param value The signed 32 bit value to convert
 	*/
 	explicit FixedPoint(const std::int32_t& value)
-		: _data(static_cast<T>(value * ONE))
+			: _data(static_cast<T>(value * ONE))
 	{}
 
 	/*!
@@ -94,7 +101,7 @@ public:
 		\param value The unsigned 8 bit value to convert
 	*/
 	explicit FixedPoint(const std::uint8_t& value)
-		: _data(static_cast<T>(value * ONE))
+			: _data(static_cast<T>(value * ONE))
 	{}
 
 	/*!
@@ -102,7 +109,7 @@ public:
 		\param value The unsigned 16 bit value to convert
 	*/
 	explicit FixedPoint(const std::uint16_t& value)
-		: _data(static_cast<T>(value * ONE))
+			: _data(static_cast<T>(value * ONE))
 	{}
 
 	/*!
@@ -110,12 +117,12 @@ public:
 		\param value The unsigned 32 bit value to convert
 	*/
 	explicit FixedPoint(const std::uint32_t& value)
-		: _data(static_cast<T>(value * ONE))
+			: _data(static_cast<T>(value * ONE))
 	{}
 
 	/*!
 		\brief Static function to return the minimum value of the fixed point template
-		\returns A fixed point number corresponding to the minimum value 
+		\returns A fixed point number corresponding to the minimum value
 	*/
 	static FixedPoint<T, F> min();
 
@@ -128,33 +135,33 @@ public:
 	T raw() const { return _data; }
 	void raw(const T& value) { _data = value; }
 
-	double toFloat() const { return static_cast<float>(_data) / ONE; }
+	float toFloat() const { return static_cast<float>(_data) / static_cast<float>(ONE); }
 	void fromFloat(const float& value) { _data = static_cast<T>(value * ONE); }
 
-	double toDouble() const { return static_cast<double>(_data) / ONE; }
+	double toDouble() const { return static_cast<double>(_data) / static_cast<double>(ONE); }
 	void fromDouble(const double& value) { _data = static_cast<T>(value * ONE); }
 
 	/*!
-		\brief 
-		\return 
+		\brief Calculate the fractional resolution of the fixed point
+		\returns A float representing the fractional resolution of the fixed point
 	*/
 	float resolution() const;
-	
+
 	/*!
-		\brief 
-		\return 
+		\brief Get a bit set which represents the whole part of the fixed point number
+		\returns A bit set of the whole part of the fixed point
 	*/
 	std::bitset<sizeof(T) * 8> wholeBitSet();
-	
+
 	/*!
-		\brief 
-		\return 
+		\brief Get a bit set which represents the fractional part of the fixed point number
+		\returns A bit set of the whole part of the fixed point
 	*/
 	std::bitset<sizeof(T) * 8> fractionBitSet();
-	
+
 	/*!
-		\brief 
-		\return 
+		\brief Get the raw bit set of the stored data on the class
+		\returns A bit set of the stored data
 	*/
 	std::bitset<sizeof(T) * 8> rawBitSet();
 
@@ -169,43 +176,58 @@ public:
 	FixedPoint<T, F> operator+(const FixedPoint<T, F>& rhs) const;
 	FixedPoint<T, F>& operator+=(const FixedPoint<T, F>& rhs);
 
-	
+	template <typename U, std::int8_t G>
+	FixedPoint<T, F> operator-(const FixedPoint<U, G>& value) const;
+	FixedPoint<T, F> operator-(const FixedPoint<T, F>& rhs) const;
+	FixedPoint<T, F>& operator-=(const FixedPoint<T, F>& rhs);
+
+	bool operator==(const FixedPoint &rhs) const;
+	bool operator!=(const FixedPoint &rhs) const;
+
+	bool operator<(const FixedPoint &rhs) const;
+	bool operator>(const FixedPoint &rhs) const;
+	bool operator<=(const FixedPoint &rhs) const;
+	bool operator>=(const FixedPoint &rhs) const;
+
 	/*!
-		\brief 
-		\tparam U 
-		\tparam G 
-		\return 
+		\brief
+		\tparam U
+		\tparam G
+		\return
 	*/
 	template <typename U, std::int8_t G>
 	FixedPoint<U, G> convert() const;
 
-private:
 	/*!
-		\brief 
-		\param value 
-		\return 
+		\brief Creates a a new fixed point object with a value corresponding to the raw data to be stored
+		\details The value in this case is the number that is stored within the class that
+					represents the fixed point number
+		\param data The new raw data to be stored on the fixed point
+		\returns A fixed point number with the raw data as the parameter
 	*/
-	static FixedPoint<T, F> createFixedPoint(T value);
-	
+	static FixedPoint<T, F> createFixedPoint(T data);
+
 	/*!
-		\brief 
-		\tparam I 
-		\tparam J 
-		\param initial 
-		\param shift 
-		\return 
+		\brief Converts a given data type to another whilst also having the option of shifting the bits
+	 			in a given direction
+		\tparam I The starting data type to to be converted
+		\tparam J The final data type that the data will be converted to
+		\param initial
+		\param shift
+		\return
 	*/
 	template <typename I, typename J>
 	J static convertType(const I& initial, std::int8_t shift);
-	
+
+private:
 	/*!
-		\brief 
-		\return 
+		\brief Create a number representing bit mask covering the fractional part of the fixed point
+		\returns A number representing a bit mask
 	*/
 	T bitMask();
 
 	/*!
-		
+		The templated integer number representing the fixed point
 	*/
 	T _data;
 };
@@ -278,10 +300,10 @@ FixedPoint<T, F> FixedPoint<T, F>::operator*(const FixedPoint<U, G>& value) cons
 }
 
 template <typename T, std::int8_t F>
-FixedPoint<T, F> FixedPoint<T, F>::createFixedPoint(T value)
+FixedPoint<T, F> FixedPoint<T, F>::createFixedPoint(T data)
 {
 	FixedPoint<T, F> fixed_point;
-	fixed_point._data = value;
+	fixed_point._data = data;
 	return fixed_point;
 }
 
@@ -296,7 +318,7 @@ FixedPoint<T, F> FixedPoint<T, F>::operator+(const FixedPoint<U, G>& value) cons
 	FixedPoint<V, FRACTION> lhs = this->convert<V, FRACTION>();
 	FixedPoint<V, FRACTION> rhs = value.template convert<V, FRACTION>();
 
-	return FixedPoint<V, FRACTION>::createFixedPoint(lhs.raw() + rhs.raw()).template convert<T, U>();
+	return FixedPoint<V, FRACTION>::createFixedPoint(lhs._data + rhs._data).template convert<T, U>();
 }
 
 template <typename T, std::int8_t F>
@@ -309,6 +331,33 @@ template <typename T, std::int8_t F>
 FixedPoint<T, F>& FixedPoint<T, F>::operator+=(const FixedPoint<T, F>& rhs)
 {
 	_data += rhs._data;
+	return *this;
+}
+
+template <typename T, std::int8_t F>
+template <typename U, std::int8_t G>
+FixedPoint<T, F> FixedPoint<T, F>::operator-(const FixedPoint<U, G>& value) const
+{
+	static const std::int8_t FRACTION = F - G > 0 ? F : G;
+
+	typedef typename SizeTypeIncrement<T, U>::Type V;
+
+	FixedPoint<V, FRACTION> lhs = this->convert<V, FRACTION>();
+	FixedPoint<V, FRACTION> rhs = value.template convert<V, FRACTION>();
+
+	return FixedPoint<V, FRACTION>::createFixedPoint(lhs.raw() - rhs.raw()).template convert<T, U>();
+}
+
+template <typename T, std::int8_t F>
+FixedPoint<T, F> FixedPoint<T, F>::operator-(const FixedPoint<T, F>& rhs) const
+{
+	return FixedPoint<T, F>::createFixedPoint(this->_data - rhs._data);
+}
+
+template <typename T, std::int8_t F>
+FixedPoint<T, F>& FixedPoint<T, F>::operator-=(const FixedPoint<T, F>& rhs)
+{
+	_data -= rhs._data;
 	return *this;
 }
 
@@ -336,6 +385,42 @@ J FixedPoint<T, F>::convertType(const I& initial, std::int8_t shift)
 	return static_cast<J>(intermediate);
 }
 
+template<typename T, std::int8_t F>
+bool FixedPoint<T, F>::operator==(const FixedPoint &rhs) const
+{
+	return _data == rhs._data;
+}
+
+template<typename T, std::int8_t F>
+bool FixedPoint<T, F>::operator!=(const FixedPoint &rhs) const
+{
+	return !(rhs == *this);
+}
+
+template<typename T, std::int8_t F>
+bool FixedPoint<T, F>::operator<(const FixedPoint &rhs) const
+{
+	return _data < rhs._data;
+}
+
+template<typename T, std::int8_t F>
+bool FixedPoint<T, F>::operator>(const FixedPoint &rhs) const
+{
+	return rhs < *this;
+}
+
+template<typename T, std::int8_t F>
+bool FixedPoint<T, F>::operator<=(const FixedPoint &rhs) const
+{
+	return !(rhs < *this);
+}
+
+template<typename T, std::int8_t F>
+bool FixedPoint<T, F>::operator>=(const FixedPoint &rhs) const
+{
+	return !(*this < rhs);
+}
+
 namespace std
 {
 	template <class T, std::int8_t F>
@@ -346,13 +431,13 @@ namespace std
 		static constexpr FixedPoint<T, F> min() noexcept { return FixedPoint<T, F>::min(); }
 		static constexpr T max() noexcept { return T(); }
 		static constexpr T lowest() noexcept { return T(); }
-		
+
 		static constexpr int  digits = 0;
 		static constexpr int  digits10 = 0;
 		static constexpr bool is_signed = false;
 		static constexpr bool is_integer = false;
 		static constexpr bool is_exact = false;
-		
+
 		static constexpr int radix = 2;
 		static constexpr T epsilon() noexcept { return T(); }
 		static constexpr T round_error() noexcept { return T(); }
@@ -366,7 +451,7 @@ namespace std
 		static constexpr bool has_quiet_NaN = false;
 		static constexpr bool has_signaling_NaN = false;
 		static constexpr float_denorm_style has_denorm = denorm_absent;
-		
+
 		static constexpr bool has_denorm_loss = false;
 		static constexpr T infinity() noexcept { return T(); }
 		static constexpr T quiet_NaN() noexcept { return T(); }
@@ -382,3 +467,6 @@ namespace std
 		static constexpr float_round_style round_style = round_to_nearest;
 	};
 }
+
+#pragma clang diagnostic pop
+#pragma clang diagnostic pop
