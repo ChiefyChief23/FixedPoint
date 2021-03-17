@@ -4,12 +4,6 @@
 
 #pragma once
 
-#pragma clang diagnostic push
-#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
-
-#pragma clang diagnostic push
-#pragma ide diagnostic ignored "modernize-use-nodiscard"
-
 #include <cstdint>
 #include <limits>
 #include <bitset>
@@ -181,13 +175,27 @@ public:
 	FixedPoint<T, F> operator-(const FixedPoint<T, F>& rhs) const;
 	FixedPoint<T, F>& operator-=(const FixedPoint<T, F>& rhs);
 
-	bool operator==(const FixedPoint &rhs) const;
-	bool operator!=(const FixedPoint &rhs) const;
+	bool operator==(const FixedPoint& rhs) const;
+	bool operator!=(const FixedPoint& rhs) const;
 
-	bool operator<(const FixedPoint &rhs) const;
-	bool operator>(const FixedPoint &rhs) const;
-	bool operator<=(const FixedPoint &rhs) const;
-	bool operator>=(const FixedPoint &rhs) const;
+	bool operator<(const FixedPoint& rhs) const;
+	bool operator>(const FixedPoint& rhs) const;
+	bool operator<=(const FixedPoint& rhs) const;
+	bool operator>=(const FixedPoint& rhs) const;
+
+	template <typename U, std::int8_t G>
+	bool operator==(const FixedPoint<U, G>& rhs) const;
+	template <typename U, std::int8_t G>
+	bool operator!=(const FixedPoint<U, G>& rhs) const;
+
+	template <typename U, std::int8_t G>
+	bool operator<(const FixedPoint<U, G>& rhs) const;
+	template <typename U, std::int8_t G>
+	bool operator>(const FixedPoint<U, G>& rhs) const;
+	template <typename U, std::int8_t G>
+	bool operator<=(const FixedPoint<U, G>& rhs) const;
+	template <typename U, std::int8_t G>
+	bool operator>=(const FixedPoint<U, G>& rhs) const;
 
 	/*!
 		\brief Converts the FixedPoint to a completely different type and resolution
@@ -386,39 +394,81 @@ J FixedPoint<T, F>::convertType(const I& initial, std::int8_t shift)
 }
 
 template<typename T, std::int8_t F>
-bool FixedPoint<T, F>::operator==(const FixedPoint &rhs) const
+bool FixedPoint<T, F>::operator==(const FixedPoint& rhs) const
 {
 	return _data == rhs._data;
 }
 
 template<typename T, std::int8_t F>
-bool FixedPoint<T, F>::operator!=(const FixedPoint &rhs) const
+bool FixedPoint<T, F>::operator!=(const FixedPoint& rhs) const
 {
-	return rhs != *this;
+	return _data != rhs._data;
 }
 
 template<typename T, std::int8_t F>
-bool FixedPoint<T, F>::operator<(const FixedPoint &rhs) const
+bool FixedPoint<T, F>::operator<(const FixedPoint& rhs) const
 {
 	return _data < rhs._data;
 }
 
 template<typename T, std::int8_t F>
-bool FixedPoint<T, F>::operator>(const FixedPoint &rhs) const
+bool FixedPoint<T, F>::operator>(const FixedPoint& rhs) const
 {
-	return rhs < *this;
+	return _data > rhs._data;
 }
 
 template<typename T, std::int8_t F>
-bool FixedPoint<T, F>::operator<=(const FixedPoint &rhs) const
+bool FixedPoint<T, F>::operator<=(const FixedPoint& rhs) const
 {
-	return rhs >= *this;
+	return _data <= rhs._data;
 }
 
 template<typename T, std::int8_t F>
-bool FixedPoint<T, F>::operator>=(const FixedPoint &rhs) const
+bool FixedPoint<T, F>::operator>=(const FixedPoint& rhs) const
 {
-	return *this >= rhs;
+	return _data >= rhs._data;
+}
+
+template<typename T, std::int8_t F>
+template<typename U, std::int8_t G>
+bool FixedPoint<T, F>::operator==(const FixedPoint<U, G>& rhs) const
+{
+	return _data == rhs.template convert<T, F>()._data;
+}
+
+template<typename T, std::int8_t F>
+template<typename U, std::int8_t G>
+bool FixedPoint<T, F>::operator!=(const FixedPoint<U, G>& rhs) const
+{
+	return _data != rhs.template convert<T, F>()._data;
+}
+
+template<typename T, std::int8_t F>
+template<typename U, std::int8_t G>
+bool FixedPoint<T, F>::operator<(const FixedPoint<U, G>& rhs) const
+{
+	return _data < rhs.template convert<T, F>()._data;
+}
+
+template<typename T, std::int8_t F>
+template<typename U, std::int8_t G>
+bool FixedPoint<T, F>::operator>(const FixedPoint<U, G>& rhs) const
+{
+	return _data > rhs.template convert<T, F>()._data;
+}
+
+template<typename T, std::int8_t F>
+template<typename U, std::int8_t G>
+bool FixedPoint<T, F>::operator<=(const FixedPoint<U, G>& rhs) const
+{
+	return _data <= rhs.template convert<T, F>()._data;
+}
+
+template<typename T, std::int8_t F>
+template<typename U, std::int8_t G>
+bool FixedPoint<T, F>::operator>=(const FixedPoint<U, G>& rhs) const
+{
+	return _data >= rhs.template convert<T, F>()._data;
 }
 
 namespace std
@@ -454,7 +504,22 @@ namespace std
 		static constexpr bool is_exact = false;
 
 		static constexpr int radix = 2;
-		static constexpr T epsilon() noexcept { return T(); }
+		static constexpr FixedPoint<T, F> epsilon() noexcept
+		{
+			if (F > 0)
+			{
+				FixedPoint<T, F> fixed_point(0);
+
+				T raw = fixed_point.raw();
+				raw++;
+
+				fixed_point.raw(raw);
+
+				return fixed_point;
+			}
+
+			return FixedPoint<T, F>(0);
+		}
 		static constexpr T round_error() noexcept { return T(); }
 
 		static constexpr int  min_exponent = 0;
@@ -477,11 +542,8 @@ namespace std
 		static constexpr bool is_bounded = true;
 		static constexpr bool is_modulo = false;
 
-		static constexpr bool traps = false;
+		static constexpr bool traps = true;
 		static constexpr bool tinyness_before = false;
-		static constexpr float_round_style round_style = round_to_nearest;
+		static constexpr float_round_style round_style = std::round_toward_zero;
 	};
 }
-
-#pragma clang diagnostic pop
-#pragma clang diagnostic pop
