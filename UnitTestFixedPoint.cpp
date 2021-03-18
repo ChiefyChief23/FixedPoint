@@ -26,55 +26,120 @@ namespace Lambda
 
 	TEST(FixedPoint, NumericLimitsGeneral)
 	{
-		typedef FixedPoint<std::uint8_t, 4> FixedPoint;
+		typedef FixedPoint<std::uint8_t, 4> U8F4;
 
-		EXPECT_TRUE(std::numeric_limits<FixedPoint>::is_specialized);
-		EXPECT_EQ(FixedPoint(0), std::numeric_limits<FixedPoint>::min());
-		//EXPECT_EQ(FixedPoint(0), std::numeric_limits<FixedPoint>::max());
-		//EXPECT_EQ(FixedPoint(0), std::numeric_limits<FixedPoint>::lowest());
+		EXPECT_TRUE(std::numeric_limits<U8F4>::is_specialized);
+		EXPECT_EQ(U8F4(0), std::numeric_limits<U8F4>::min());
+		//EXPECT_EQ(U8F4(0), std::numeric_limits<U8F4>::max());
+		//EXPECT_EQ(U8F4(0), std::numeric_limits<U8F4>::lowest());
 
-		//EXPECT_EQ(FixedPoint(0), std::numeric_limits<FixedPoint>::digits);
-		//EXPECT_EQ(FixedPoint(0), std::numeric_limits<FixedPoint>::digits10);
-		EXPECT_FALSE(std::numeric_limits<FixedPoint>::is_signed);
-		EXPECT_FALSE(std::numeric_limits<FixedPoint>::is_integer);
-		EXPECT_FALSE(std::numeric_limits<FixedPoint>::is_exact);
+		//EXPECT_EQ(U8F4(0), std::numeric_limits<U8F4>::digits);
+		//EXPECT_EQ(U8F4(0), std::numeric_limits<U8F4>::digits10);
+		EXPECT_FALSE(std::numeric_limits<U8F4>::is_signed);
+		EXPECT_FALSE(std::numeric_limits<U8F4>::is_integer);
+		EXPECT_FALSE(std::numeric_limits<U8F4>::is_exact);
 
-		EXPECT_EQ(2, std::numeric_limits<FixedPoint>::radix);
+		EXPECT_EQ(2, std::numeric_limits<U8F4>::radix);
 
-		FixedPoint epsilon;
+		U8F4 epsilon;
 		epsilon.raw(std::uint8_t(1));
-		EXPECT_EQ(epsilon, std::numeric_limits<FixedPoint>::epsilon());
+		EXPECT_EQ(epsilon, std::numeric_limits<U8F4>::epsilon());
 
-		//EXPECT_EQ(FixedPoint(0), std::numeric_limits<FixedPoint>::round_error());
+		//EXPECT_EQ(U8F4(0), std::numeric_limits<U8F4>::round_error());
 
-		//EXPECT_EQ(FixedPoint(0), std::numeric_limits<FixedPoint>::min_exponent);
-		//EXPECT_EQ(FixedPoint(0), std::numeric_limits<FixedPoint>::min_exponent10);
-		//EXPECT_EQ(FixedPoint(0), std::numeric_limits<FixedPoint>::max_exponent);
-		//EXPECT_EQ(FixedPoint(0), std::numeric_limits<FixedPoint>::max_exponent10);
+		//EXPECT_EQ(U8F4(0), std::numeric_limits<U8F4>::min_exponent);
+		//EXPECT_EQ(U8F4(0), std::numeric_limits<U8F4>::min_exponent10);
+		//EXPECT_EQ(U8F4(0), std::numeric_limits<U8F4>::max_exponent);
+		//EXPECT_EQ(U8F4(0), std::numeric_limits<U8F4>::max_exponent10);
 
-		EXPECT_FALSE(std::numeric_limits<FixedPoint>::has_infinity);
-		EXPECT_FALSE(std::numeric_limits<FixedPoint>::has_quiet_NaN);
-		EXPECT_FALSE(std::numeric_limits<FixedPoint>::has_signaling_NaN);
-		EXPECT_EQ(std::numeric_limits<FixedPoint>::has_denorm, std::denorm_absent);
+		EXPECT_FALSE(std::numeric_limits<U8F4>::has_infinity);
+		EXPECT_FALSE(std::numeric_limits<U8F4>::has_quiet_NaN);
+		EXPECT_FALSE(std::numeric_limits<U8F4>::has_signaling_NaN);
+		EXPECT_EQ(std::numeric_limits<U8F4>::has_denorm, std::denorm_absent);
 
-		EXPECT_FALSE(std::numeric_limits<FixedPoint>::has_denorm_loss);
-		EXPECT_EQ(0, std::numeric_limits<FixedPoint>::infinity());
-		EXPECT_EQ(0, std::numeric_limits<FixedPoint>::quiet_NaN());
-		EXPECT_EQ(0, std::numeric_limits<FixedPoint>::signaling_NaN());
-		//EXPECT_EQ(FixedPoint(0), std::numeric_limits<FixedPoint>::denorm_min());
+		EXPECT_FALSE(std::numeric_limits<U8F4>::has_denorm_loss);
+		EXPECT_EQ(0, std::numeric_limits<U8F4>::infinity());
+		EXPECT_EQ(0, std::numeric_limits<U8F4>::quiet_NaN());
+		EXPECT_EQ(0, std::numeric_limits<U8F4>::signaling_NaN());
+		//EXPECT_EQ(U8F4(0), std::numeric_limits<U8F4>::denorm_min());
 
-		EXPECT_FALSE(std::numeric_limits<FixedPoint>::is_iec559);
-		EXPECT_TRUE(std::numeric_limits<FixedPoint>::is_bounded);
-		EXPECT_FALSE(std::numeric_limits<FixedPoint>::is_modulo);
+		EXPECT_FALSE(std::numeric_limits<U8F4>::is_iec559);
+		EXPECT_TRUE(std::numeric_limits<U8F4>::is_bounded);
+		EXPECT_FALSE(std::numeric_limits<U8F4>::is_modulo);
 
-		EXPECT_TRUE(std::numeric_limits<FixedPoint>::traps);
-		EXPECT_FALSE(std::numeric_limits<FixedPoint>::tinyness_before);
-		EXPECT_EQ(std::numeric_limits<FixedPoint>::round_style, std::round_toward_zero);
+		EXPECT_TRUE(std::numeric_limits<U8F4>::traps);
+		EXPECT_FALSE(std::numeric_limits<U8F4>::tinyness_before);
+		EXPECT_EQ(std::numeric_limits<U8F4>::round_style, std::round_toward_zero);
 	}
 
-	TEST(FixedPoint, StreamOperators)
+	TEST(FixedPoint, NumericLimitsMaxMin)
 	{
+		std::cout << "[          ] U8F4 - Max/Min" << std::endl;
 
+		FixedPoint<std::uint8_t, 4> u8_f4_min_a = std::numeric_limits<FixedPoint<std::uint8_t, 4>>::min();
+		FixedPoint<std::uint8_t, 4> u8_f4_max_a = std::numeric_limits<FixedPoint<std::uint8_t, 4>>::max();
+
+		FixedPoint<std::uint8_t, 4> u8_f4_min_b(0);
+		FixedPoint<std::uint8_t, 4> u8_f4_max_b(15.9375);
+
+		std::cout << "[          ] " << u8_f4_min_a.rawBitSet() << "  " << u8_f4_min_a.toDouble() << " - Reference" << std::endl;
+		std::cout << "[          ] " << u8_f4_min_b.rawBitSet() << "  " << u8_f4_min_b.toDouble() << " - Test" << std::endl;
+		std::cout << "[          ] " << u8_f4_max_a.rawBitSet() << "  " << u8_f4_max_a.toDouble() << " - Reference" << std::endl;
+		std::cout << "[          ] " << u8_f4_max_b.rawBitSet() << "  " << u8_f4_max_b.toDouble() << " - Test" << std::endl;
+		std::cout << "[          ] " << std::endl;
+
+		EXPECT_EQ(u8_f4_min_a, u8_f4_min_b);
+		EXPECT_EQ(u8_f4_max_a, u8_f4_max_b);
+
+		std::cout << "[          ] S8F4 - Max/Min" << std::endl;
+
+		FixedPoint<std::int8_t, 4> s8_f4_min_a = std::numeric_limits<FixedPoint<std::int8_t, 4>>::min();
+		FixedPoint<std::int8_t, 4> s8_f4_max_a = std::numeric_limits<FixedPoint<std::int8_t, 4>>::max();
+
+		FixedPoint<std::int8_t, 4> s8_f4_min_b(-8);
+		FixedPoint<std::int8_t, 4> s8_f4_max_b(7.9375);
+
+		std::cout << "[          ] " << s8_f4_min_a.rawBitSet() << "  " << s8_f4_min_a.toDouble() << " - Reference" << std::endl;
+		std::cout << "[          ] " << s8_f4_min_b.rawBitSet() << "  " << s8_f4_min_b.toDouble() << " - Test" << std::endl;
+		std::cout << "[          ] " << s8_f4_max_a.rawBitSet() << "  " << s8_f4_max_a.toDouble() << " - Reference" << std::endl;
+		std::cout << "[          ] " << s8_f4_max_b.rawBitSet() << "  " << s8_f4_max_b.toDouble() << " - Test" << std::endl;
+		std::cout << "[          ] " << std::endl;
+
+		EXPECT_EQ(s8_f4_min_a, s8_f4_min_b);
+		EXPECT_EQ(s8_f4_max_a, s8_f4_max_b);
+
+		std::cout << "[          ] U16F8 - Max/Min" << std::endl;
+
+		FixedPoint<std::uint16_t, 8> u16_f8_min_a = std::numeric_limits<FixedPoint<std::uint16_t, 8>>::min();
+		FixedPoint<std::uint16_t, 8> u16_f8_max_a = std::numeric_limits<FixedPoint<std::uint16_t, 8>>::max();
+
+		FixedPoint<std::uint16_t, 8> u16_f8_min_b(0);
+		FixedPoint<std::uint16_t, 8> u16_f8_max_b(255.9961);
+
+		std::cout << "[          ] " << u16_f8_min_a.rawBitSet() << "  " << u16_f8_min_a.toDouble() << " - Reference" << std::endl;
+		std::cout << "[          ] " << u16_f8_min_b.rawBitSet() << "  " << u16_f8_min_b.toDouble() << " - Test" << std::endl;
+		std::cout << "[          ] " << u16_f8_max_a.rawBitSet() << "  " << u16_f8_max_a.toDouble() << " - Reference" << std::endl;
+		std::cout << "[          ] " << u16_f8_max_b.rawBitSet() << "  " << u16_f8_max_b.toDouble() << " - Test" << std::endl;
+		std::cout << "[          ] " << std::endl;
+
+		EXPECT_EQ(u16_f8_min_a, u16_f8_min_b);
+		EXPECT_EQ(u16_f8_max_a, u16_f8_max_b);
+
+		std::cout << "[          ] S16F8 - Max/Min" << std::endl;
+
+		FixedPoint<std::int16_t, 8> s16_f8_min_a = std::numeric_limits<FixedPoint<std::int16_t, 8>>::min();
+		FixedPoint<std::int16_t, 8> s16_f8_max_a = std::numeric_limits<FixedPoint<std::int16_t, 8>>::max();
+
+		FixedPoint<std::int16_t, 8> s16_f8_min_b(-128);
+		FixedPoint<std::int16_t, 8> s16_f8_max_b(127.9961);
+
+		std::cout << "[          ] " << s16_f8_min_a.rawBitSet() << "  " << s16_f8_min_a.toDouble() << " - Reference" << std::endl;
+		std::cout << "[          ] " << s16_f8_min_b.rawBitSet() << "  " << s16_f8_min_b.toDouble() << " - Test" << std::endl;
+		std::cout << "[          ] " << s16_f8_max_a.rawBitSet() << "  " << s16_f8_max_a.toDouble() << " - Reference" << std::endl;
+		std::cout << "[          ] " << s16_f8_max_b.rawBitSet() << "  " << s16_f8_max_b.toDouble() << " - Test" << std::endl;
+
+		EXPECT_EQ(s16_f8_min_a, s16_f8_min_b);
+		EXPECT_EQ(s16_f8_max_a, s16_f8_max_b);
 	}
 
 	TEST(FixedPoint, Comparisons)
@@ -236,5 +301,59 @@ namespace Lambda
 		FixedPoint<std::int16_t, 8> s16_f8(5.5);
 		FixedPoint<std::uint8_t, 4> u8_f4_b = s16_f8.convert<std::uint8_t, 4>();
 		EXPECT_EQ(u8_f4_a, u8_f4_b);
+	}
+
+	TEST(FixedPoint, Addition)
+	{
+		std::cout << "[          ] U8F3 + U8F3 Addition Exact - 8/8 bit" << std::endl;
+		FixedPoint<std::uint8_t, 3> u8_f3_a(2.625);
+		FixedPoint<std::uint8_t, 3> u8_f3_b(1.625);
+		FixedPoint<std::uint8_t, 3> u8_f3_c = u8_f3_a + u8_f3_b;
+
+		std::cout << "[          ] A:  " << u8_f3_a.rawBitSet() << "  " << u8_f3_a.toDouble() << std::endl;
+		std::cout << "[          ] B:  " << u8_f3_b.rawBitSet() << "  " << u8_f3_b.toDouble() << std::endl;
+		std::cout << "[          ] C:  " << u8_f3_c.rawBitSet() << "  " << u8_f3_c.toDouble() << std::endl;
+		std::cout << "[          ]" << std::endl;
+
+		FixedPoint<std::uint8_t, 3> u8_f3_d(4.25);
+		EXPECT_EQ(u8_f3_c, u8_f3_d);
+
+		std::cout << "[          ] S8F3 + S8F3 Addition Exact - 8/8 bit" << std::endl;
+		FixedPoint<std::int8_t, 3> s8_f3_a(3.125);
+		FixedPoint<std::int8_t, 3> s8_f3_b(-1.625);
+		FixedPoint<std::int8_t, 3> s8_f3_c = s8_f3_a + s8_f3_b;
+
+		std::cout << "[          ] A:  " << s8_f3_a.rawBitSet() << "  " << s8_f3_a.toDouble() << std::endl;
+		std::cout << "[          ] B:  " << s8_f3_b.rawBitSet() << " " << s8_f3_b.toDouble() << std::endl;
+		std::cout << "[          ] C:  " << s8_f3_c.rawBitSet() << "  " << s8_f3_c.toDouble() << std::endl;
+		std::cout << "[          ]" << std::endl;
+
+		FixedPoint<std::int8_t, 3> s8_f3_d(1.5);
+		EXPECT_EQ(s8_f3_c, s8_f3_d);
+
+		std::cout << "[          ] S16F8 + U16F8 Addition Exact - 16/16 bit" << std::endl;
+		FixedPoint<std::int16_t, 8> s16_f8_a(-13.375);
+		FixedPoint<std::uint16_t, 6> u16_f6_b(10.125);
+		FixedPoint<std::int16_t, 8> s16_f8_c = s16_f8_a + u16_f6_b;
+
+		std::cout << "[          ] A:  " << s16_f8_a.rawBitSet() << " " << s16_f8_a.toDouble() << std::endl;
+		std::cout << "[          ] B:  " << u16_f6_b.rawBitSet() << "  " << u16_f6_b.toDouble() << std::endl;
+		std::cout << "[          ] C:  " << s16_f8_c.rawBitSet() << " " << s16_f8_c.toDouble() << std::endl;
+		std::cout << "[          ]" << std::endl;
+
+		FixedPoint<std::int16_t, 8> s16_f8_d(-3.25);
+		EXPECT_EQ(s16_f8_c, s16_f8_d);
+
+		std::cout << "[          ] U8F4 + S16F12 Addition Exact - 8/16 bit - Incompatible" << std::endl;
+		FixedPoint<std::uint8_t, 4> u8_f4_a(1.125);
+		FixedPoint<std::int16_t, 12> s16_f12_a(-0.125);
+		FixedPoint<std::uint8_t, 4> u8_f4_b = u8_f4_a + s16_f12_a;
+
+		std::cout << "[          ] A:          " << u8_f4_a.rawBitSet() << "  " << u8_f4_a.toDouble() << std::endl;
+		std::cout << "[          ] B:  " << s16_f12_a.rawBitSet() << " " << s16_f12_a.toDouble() << std::endl;
+		std::cout << "[          ] C:          " << u8_f4_b.rawBitSet() << "  " << u8_f4_b.toDouble() << std::endl;
+
+		FixedPoint<std::uint8_t, 4> u8_f4_c(1);
+		EXPECT_EQ(u8_f4_b, u8_f4_c);
 	}
 }

@@ -16,7 +16,11 @@ template <> struct SignedSelector<std::int16_t> { typedef std::uint16_t Type; };
 template <> struct SignedSelector<std::int32_t> { typedef std::uint32_t Type; };
 template <> struct SignedSelector<std::int64_t> { typedef std::uint64_t Type; };
 
-template <typename T, typename U> struct SizeTypeIncrement { typedef std::int64_t Type; };
+template <typename T, typename U>
+struct SizeTypeIncrement
+{
+	typedef std::int64_t Type;
+};
 template <> struct SizeTypeIncrement<std::int8_t, std::int8_t> { typedef std::int16_t Type; };
 template <> struct SizeTypeIncrement<std::int16_t, std::int16_t> { typedef std::int32_t Type; };
 template <> struct SizeTypeIncrement<std::int32_t, std::int32_t> { typedef std::int32_t Type; };
@@ -167,13 +171,13 @@ public:
 
 	template <typename U, std::int8_t G>
 	FixedPoint<T, F> operator+(const FixedPoint<U, G>& value) const;
-	FixedPoint<T, F> operator+(const FixedPoint<T, F>& rhs) const;
-	FixedPoint<T, F>& operator+=(const FixedPoint<T, F>& rhs);
+	FixedPoint operator+(const FixedPoint& rhs) const;
+	FixedPoint& operator+=(const FixedPoint& rhs);
 
 	template <typename U, std::int8_t G>
 	FixedPoint<T, F> operator-(const FixedPoint<U, G>& value) const;
-	FixedPoint<T, F> operator-(const FixedPoint<T, F>& rhs) const;
-	FixedPoint<T, F>& operator-=(const FixedPoint<T, F>& rhs);
+	FixedPoint operator-(const FixedPoint& rhs) const;
+	FixedPoint& operator-=(const FixedPoint& rhs);
 
 	bool operator==(const FixedPoint& rhs) const;
 	bool operator!=(const FixedPoint& rhs) const;
@@ -326,7 +330,7 @@ FixedPoint<T, F> FixedPoint<T, F>::operator+(const FixedPoint<U, G>& value) cons
 	FixedPoint<V, FRACTION> lhs = this->convert<V, FRACTION>();
 	FixedPoint<V, FRACTION> rhs = value.template convert<V, FRACTION>();
 
-	return FixedPoint<V, FRACTION>::createFixedPoint(lhs._data + rhs._data).template convert<T, U>();
+	return FixedPoint<V, FRACTION>::createFixedPoint(lhs.raw() + rhs.raw()).template convert<T, F>();
 }
 
 template <typename T, std::int8_t F>
@@ -479,19 +483,16 @@ namespace std
 	public:
 		static constexpr FixedPoint<T, F> min() noexcept
 		{
-			if (std::numeric_limits<T>::is_signed)
-			{
-				return FixedPoint<T, F>(0); /* TODO */
-			}
-			else
-			{
-				return FixedPoint<T, F>(0);
-			}
+			FixedPoint<T, F> fixed_point(0);
+			fixed_point.raw(std::numeric_limits<T>::min());
+			return fixed_point;
 		}
 
-		static constexpr T max() noexcept
+		static constexpr FixedPoint<T, F> max() noexcept
 		{
-			return T(0);
+			FixedPoint<T, F> fixed_point(0);
+			fixed_point.raw(std::numeric_limits<T>::max());
+			return fixed_point;
 		}
 
 		static constexpr T lowest() noexcept { return min(); }
