@@ -29,9 +29,7 @@ namespace Lambda
 		typedef FixedPoint<std::uint8_t, 4> U8F4;
 
 		EXPECT_TRUE(std::numeric_limits<U8F4>::is_specialized);
-		EXPECT_EQ(U8F4(0), std::numeric_limits<U8F4>::min());
-		//EXPECT_EQ(U8F4(0), std::numeric_limits<U8F4>::max());
-		//EXPECT_EQ(U8F4(0), std::numeric_limits<U8F4>::lowest());
+		//EXPECT_EQ(U8F4(0), std::numeric_limits<U8F4>::min());
 
 		//EXPECT_EQ(U8F4(0), std::numeric_limits<U8F4>::digits);
 		//EXPECT_EQ(U8F4(0), std::numeric_limits<U8F4>::digits10);
@@ -72,74 +70,94 @@ namespace Lambda
 		EXPECT_EQ(std::numeric_limits<U8F4>::round_style, std::round_toward_zero);
 	}
 
-	TEST(FixedPoint, NumericLimitsMaxMin)
+	TEST(FixedPoint, NumericLimitsMaxMinLowest)
 	{
-		std::cout << "[          ] U8F4 - Max/Min" << std::endl;
+		std::cout << "[          ] U8F4 - Max/Lowest/Min" << std::endl;
 
-		FixedPoint<std::uint8_t, 4> u8_f4_min_a = std::numeric_limits<FixedPoint<std::uint8_t, 4>>::min();
+		FixedPoint<std::uint8_t, 4> u8_f4_lowest_a = std::numeric_limits<FixedPoint<std::uint8_t, 4>>::lowest();
 		FixedPoint<std::uint8_t, 4> u8_f4_max_a = std::numeric_limits<FixedPoint<std::uint8_t, 4>>::max();
+		FixedPoint<std::uint8_t, 4> u8_f4_min_a = std::numeric_limits<FixedPoint<std::uint8_t, 4>>::min();
 
-		FixedPoint<std::uint8_t, 4> u8_f4_min_b(0);
+		FixedPoint<std::uint8_t, 4> u8_f4_lowest_b(0);
 		FixedPoint<std::uint8_t, 4> u8_f4_max_b(15.9375);
+		FixedPoint<std::uint8_t, 4> u8_f4_min_b(0);
 
-		std::cout << "[          ] " << u8_f4_min_a.rawBitSet() << "  " << u8_f4_min_a.toDouble() << " - Reference" << std::endl;
-		std::cout << "[          ] " << u8_f4_min_b.rawBitSet() << "  " << u8_f4_min_b.toDouble() << " - Test" << std::endl;
-		std::cout << "[          ] " << u8_f4_max_a.rawBitSet() << "  " << u8_f4_max_a.toDouble() << " - Reference" << std::endl;
-		std::cout << "[          ] " << u8_f4_max_b.rawBitSet() << "  " << u8_f4_max_b.toDouble() << " - Test" << std::endl;
+		std::cout << "[          ] " << u8_f4_lowest_a.rawBitSet() << "  " << u8_f4_lowest_a.toDouble() << " - Lowest Reference" << std::endl;
+		std::cout << "[          ] " << u8_f4_lowest_b.rawBitSet() << "  " << u8_f4_lowest_b.toDouble() << " - Lowest Test" << std::endl;
+		std::cout << "[          ] " << u8_f4_max_a.rawBitSet() << "  " << u8_f4_max_a.toDouble() << " - Max Reference" << std::endl;
+		std::cout << "[          ] " << u8_f4_max_b.rawBitSet() << "  " << u8_f4_max_b.toDouble() << " - Max Test" << std::endl;
+		std::cout << "[          ] " << u8_f4_min_a.rawBitSet() << "  " << u8_f4_min_a.toDouble() << " - Min Reference" << std::endl;
+		std::cout << "[          ] " << u8_f4_min_b.rawBitSet() << "  " << u8_f4_min_b.toDouble() << " - Min Test" << std::endl;
 		std::cout << "[          ] " << std::endl;
 
-		EXPECT_EQ(u8_f4_min_a, u8_f4_min_b);
+		EXPECT_EQ(u8_f4_lowest_a, u8_f4_lowest_b);
 		EXPECT_EQ(u8_f4_max_a, u8_f4_max_b);
+		EXPECT_EQ(u8_f4_min_a, u8_f4_min_b);
 
-		std::cout << "[          ] S8F4 - Max/Min" << std::endl;
+		std::cout << "[          ] S8F4 - Max/Lowest/Min" << std::endl;
 
-		FixedPoint<std::int8_t, 4> s8_f4_min_a = std::numeric_limits<FixedPoint<std::int8_t, 4>>::min();
+		FixedPoint<std::int8_t, 4> s8_f4_lowest_a = std::numeric_limits<FixedPoint<std::int8_t, 4>>::lowest();
 		FixedPoint<std::int8_t, 4> s8_f4_max_a = std::numeric_limits<FixedPoint<std::int8_t, 4>>::max();
+		FixedPoint<std::int8_t, 4> s8_f4_min_a = std::numeric_limits<FixedPoint<std::int8_t, 4>>::min();
 
-		FixedPoint<std::int8_t, 4> s8_f4_min_b(-8);
+		FixedPoint<std::int8_t, 4> s8_f4_lowest_b(-8);
 		FixedPoint<std::int8_t, 4> s8_f4_max_b(7.9375);
+		FixedPoint<std::int8_t, 4> s8_f4_min_b(0);
 
-		std::cout << "[          ] " << s8_f4_min_a.rawBitSet() << "  " << s8_f4_min_a.toDouble() << " - Reference" << std::endl;
-		std::cout << "[          ] " << s8_f4_min_b.rawBitSet() << "  " << s8_f4_min_b.toDouble() << " - Test" << std::endl;
-		std::cout << "[          ] " << s8_f4_max_a.rawBitSet() << "  " << s8_f4_max_a.toDouble() << " - Reference" << std::endl;
-		std::cout << "[          ] " << s8_f4_max_b.rawBitSet() << "  " << s8_f4_max_b.toDouble() << " - Test" << std::endl;
+		std::cout << "[          ] " << s8_f4_lowest_a.rawBitSet() << "  " << s8_f4_lowest_a.toDouble() << " - Lowest Reference" << std::endl;
+		std::cout << "[          ] " << s8_f4_lowest_b.rawBitSet() << "  " << s8_f4_lowest_b.toDouble() << " - Lowest Test" << std::endl;
+		std::cout << "[          ] " << s8_f4_max_a.rawBitSet() << "  " << s8_f4_max_a.toDouble() << " - Max Reference" << std::endl;
+		std::cout << "[          ] " << s8_f4_max_b.rawBitSet() << "  " << s8_f4_max_b.toDouble() << " - Max Test" << std::endl;
+		std::cout << "[          ] " << s8_f4_min_a.rawBitSet() << "  " << s8_f4_min_a.toDouble() << " - Min Reference" << std::endl;
+		std::cout << "[          ] " << s8_f4_min_b.rawBitSet() << "  " << s8_f4_min_b.toDouble() << " - Min Test" << std::endl;
 		std::cout << "[          ] " << std::endl;
 
-		EXPECT_EQ(s8_f4_min_a, s8_f4_min_b);
+		EXPECT_EQ(s8_f4_lowest_a, s8_f4_lowest_b);
 		EXPECT_EQ(s8_f4_max_a, s8_f4_max_b);
+		EXPECT_EQ(s8_f4_min_a, s8_f4_min_b);
 
-		std::cout << "[          ] U16F8 - Max/Min" << std::endl;
+		std::cout << "[          ] U16F8 - Max/Lowest/Min" << std::endl;
 
-		FixedPoint<std::uint16_t, 8> u16_f8_min_a = std::numeric_limits<FixedPoint<std::uint16_t, 8>>::min();
+		FixedPoint<std::uint16_t, 8> u16_f8_lowest_a = std::numeric_limits<FixedPoint<std::uint16_t, 8>>::lowest();
 		FixedPoint<std::uint16_t, 8> u16_f8_max_a = std::numeric_limits<FixedPoint<std::uint16_t, 8>>::max();
+		FixedPoint<std::uint16_t, 8> u16_f8_min_a = std::numeric_limits<FixedPoint<std::uint16_t, 8>>::min();
 
-		FixedPoint<std::uint16_t, 8> u16_f8_min_b(0);
+		FixedPoint<std::uint16_t, 8> u16_f8_lowest_b(0);
 		FixedPoint<std::uint16_t, 8> u16_f8_max_b(255.9961);
+		FixedPoint<std::uint16_t, 8> u16_f8_min_b(0);
 
-		std::cout << "[          ] " << u16_f8_min_a.rawBitSet() << "  " << u16_f8_min_a.toDouble() << " - Reference" << std::endl;
-		std::cout << "[          ] " << u16_f8_min_b.rawBitSet() << "  " << u16_f8_min_b.toDouble() << " - Test" << std::endl;
-		std::cout << "[          ] " << u16_f8_max_a.rawBitSet() << "  " << u16_f8_max_a.toDouble() << " - Reference" << std::endl;
-		std::cout << "[          ] " << u16_f8_max_b.rawBitSet() << "  " << u16_f8_max_b.toDouble() << " - Test" << std::endl;
+		std::cout << "[          ] " << u16_f8_lowest_a.rawBitSet() << "  " << u16_f8_lowest_a.toDouble() << " - Lowest Reference" << std::endl;
+		std::cout << "[          ] " << u16_f8_lowest_b.rawBitSet() << "  " << u16_f8_lowest_b.toDouble() << " - Lowest Test" << std::endl;
+		std::cout << "[          ] " << u16_f8_max_a.rawBitSet() << "  " << u16_f8_max_a.toDouble() << " - Max Reference" << std::endl;
+		std::cout << "[          ] " << u16_f8_max_b.rawBitSet() << "  " << u16_f8_max_b.toDouble() << " - Max Test" << std::endl;
+		std::cout << "[          ] " << u16_f8_min_a.rawBitSet() << "  " << u16_f8_min_a.toDouble() << " - Min Reference" << std::endl;
+		std::cout << "[          ] " << u16_f8_min_b.rawBitSet() << "  " << u16_f8_min_b.toDouble() << " - Min Test" << std::endl;
 		std::cout << "[          ] " << std::endl;
 
-		EXPECT_EQ(u16_f8_min_a, u16_f8_min_b);
+		EXPECT_EQ(u16_f8_lowest_a, u16_f8_lowest_b);
 		EXPECT_EQ(u16_f8_max_a, u16_f8_max_b);
+		EXPECT_EQ(u16_f8_min_a, u16_f8_min_b);
 
-		std::cout << "[          ] S16F8 - Max/Min" << std::endl;
+		std::cout << "[          ] S16F8 - Max/Lowest/Min" << std::endl;
 
-		FixedPoint<std::int16_t, 8> s16_f8_min_a = std::numeric_limits<FixedPoint<std::int16_t, 8>>::min();
+		FixedPoint<std::int16_t, 8> s16_f8_lowest_a = std::numeric_limits<FixedPoint<std::int16_t, 8>>::lowest();
 		FixedPoint<std::int16_t, 8> s16_f8_max_a = std::numeric_limits<FixedPoint<std::int16_t, 8>>::max();
+		FixedPoint<std::int16_t, 8> s16_f8_min_a = std::numeric_limits<FixedPoint<std::int16_t, 8>>::min();
 
-		FixedPoint<std::int16_t, 8> s16_f8_min_b(-128);
+		FixedPoint<std::int16_t, 8> s16_f8_lowest_b(-128);
 		FixedPoint<std::int16_t, 8> s16_f8_max_b(127.9961);
+		FixedPoint<std::int16_t, 8> s16_f8_min_b(0);
 
-		std::cout << "[          ] " << s16_f8_min_a.rawBitSet() << "  " << s16_f8_min_a.toDouble() << " - Reference" << std::endl;
-		std::cout << "[          ] " << s16_f8_min_b.rawBitSet() << "  " << s16_f8_min_b.toDouble() << " - Test" << std::endl;
-		std::cout << "[          ] " << s16_f8_max_a.rawBitSet() << "  " << s16_f8_max_a.toDouble() << " - Reference" << std::endl;
-		std::cout << "[          ] " << s16_f8_max_b.rawBitSet() << "  " << s16_f8_max_b.toDouble() << " - Test" << std::endl;
+		std::cout << "[          ] " << s16_f8_lowest_a.rawBitSet() << "  " << s16_f8_lowest_a.toDouble() << " - Lowest Reference" << std::endl;
+		std::cout << "[          ] " << s16_f8_lowest_b.rawBitSet() << "  " << s16_f8_lowest_b.toDouble() << " - Lowest Test" << std::endl;
+		std::cout << "[          ] " << s16_f8_max_a.rawBitSet() << "  " << s16_f8_max_a.toDouble() << " - Max Reference" << std::endl;
+		std::cout << "[          ] " << s16_f8_max_b.rawBitSet() << "  " << s16_f8_max_b.toDouble() << " - Max Test" << std::endl;
+		std::cout << "[          ] " << s16_f8_min_a.rawBitSet() << "  " << s16_f8_min_a.toDouble() << " - Min Reference" << std::endl;
+		std::cout << "[          ] " << s16_f8_min_b.rawBitSet() << "  " << s16_f8_min_b.toDouble() << " - Min Test" << std::endl;
 
-		EXPECT_EQ(s16_f8_min_a, s16_f8_min_b);
+		EXPECT_EQ(s16_f8_lowest_a, s16_f8_lowest_b);
 		EXPECT_EQ(s16_f8_max_a, s16_f8_max_b);
+		EXPECT_EQ(s16_f8_min_a, s16_f8_min_b);
 	}
 
 	TEST(FixedPoint, Comparisons)
@@ -319,7 +337,7 @@ namespace Lambda
 		EXPECT_EQ(u8_f3_c, u8_f3_d);
 
 		std::cout << "[          ] S8F3 + S8F3 Addition Exact - 8/8 bit" << std::endl;
-		FixedPoint<std::int8_t, 3> s8_f3_a(3.125);
+		FixedPoint<std::int8_t, 3> s8_f3_a(3.0);
 		FixedPoint<std::int8_t, 3> s8_f3_b(-1.625);
 		FixedPoint<std::int8_t, 3> s8_f3_c = s8_f3_a + s8_f3_b;
 
@@ -328,12 +346,12 @@ namespace Lambda
 		std::cout << "[          ] C:  " << s8_f3_c.rawBitSet() << "  " << s8_f3_c.toDouble() << std::endl;
 		std::cout << "[          ]" << std::endl;
 
-		FixedPoint<std::int8_t, 3> s8_f3_d(1.5);
+		FixedPoint<std::int8_t, 3> s8_f3_d(1.375);
 		EXPECT_EQ(s8_f3_c, s8_f3_d);
 
 		std::cout << "[          ] S16F8 + U16F8 Addition Exact - 16/16 bit" << std::endl;
-		FixedPoint<std::int16_t, 8> s16_f8_a(-13.375);
-		FixedPoint<std::uint16_t, 6> u16_f6_b(10.125);
+		FixedPoint<std::int16_t, 8> s16_f8_a(-13.125);
+		FixedPoint<std::uint16_t, 6> u16_f6_b(10.375);
 		FixedPoint<std::int16_t, 8> s16_f8_c = s16_f8_a + u16_f6_b;
 
 		std::cout << "[          ] A:  " << s16_f8_a.rawBitSet() << " " << s16_f8_a.toDouble() << std::endl;
@@ -341,7 +359,7 @@ namespace Lambda
 		std::cout << "[          ] C:  " << s16_f8_c.rawBitSet() << " " << s16_f8_c.toDouble() << std::endl;
 		std::cout << "[          ]" << std::endl;
 
-		FixedPoint<std::int16_t, 8> s16_f8_d(-3.25);
+		FixedPoint<std::int16_t, 8> s16_f8_d(-2.75);
 		EXPECT_EQ(s16_f8_c, s16_f8_d);
 
 		std::cout << "[          ] U8F4 + S16F12 Addition Exact - 8/16 bit - Incompatible" << std::endl;
@@ -355,5 +373,113 @@ namespace Lambda
 
 		FixedPoint<std::uint8_t, 4> u8_f4_c(1);
 		EXPECT_EQ(u8_f4_b, u8_f4_c);
+	}
+
+	TEST(FixedPoint, Subtraction)
+	{
+		std::cout << "[          ] U8F3 + U8F3 Subtraction Exact - 8/8 bit" << std::endl;
+		FixedPoint<std::uint8_t, 3> u8_f3_a(2.5);
+		FixedPoint<std::uint8_t, 3> u8_f3_b(1.625);
+		FixedPoint<std::uint8_t, 3> u8_f3_c = u8_f3_a - u8_f3_b;
+
+		std::cout << "[          ] A:  " << u8_f3_a.rawBitSet() << "  " << u8_f3_a.toDouble() << std::endl;
+		std::cout << "[          ] B:  " << u8_f3_b.rawBitSet() << "  " << u8_f3_b.toDouble() << std::endl;
+		std::cout << "[          ] C:  " << u8_f3_c.rawBitSet() << "  " << u8_f3_c.toDouble() << std::endl;
+		std::cout << "[          ]" << std::endl;
+
+		FixedPoint<std::uint8_t, 3> u8_f3_d(0.875);
+		EXPECT_EQ(u8_f3_c, u8_f3_d);
+
+		std::cout << "[          ] S8F3 + S8F3 Subtraction Exact - 8/8 bit" << std::endl;
+		FixedPoint<std::int8_t, 3> s8_f3_a(1.0);
+		FixedPoint<std::int8_t, 3> s8_f3_b(-1.625);
+		FixedPoint<std::int8_t, 3> s8_f3_c = s8_f3_a - s8_f3_b;
+
+		std::cout << "[          ] A:  " << s8_f3_a.rawBitSet() << "  " << s8_f3_a.toDouble() << std::endl;
+		std::cout << "[          ] B:  " << s8_f3_b.rawBitSet() << " " << s8_f3_b.toDouble() << std::endl;
+		std::cout << "[          ] C:  " << s8_f3_c.rawBitSet() << "  " << s8_f3_c.toDouble() << std::endl;
+		std::cout << "[          ]" << std::endl;
+
+		FixedPoint<std::int8_t, 3> s8_f3_d(2.625);
+		EXPECT_EQ(s8_f3_c, s8_f3_d);
+
+		std::cout << "[          ] S16F8 + U16F8 Subtraction Exact - 16/16 bit" << std::endl;
+		FixedPoint<std::int16_t, 8> s16_f8_a(-13.125);
+		FixedPoint<std::uint16_t, 6> u16_f6_b(10.25);
+		FixedPoint<std::int16_t, 8> s16_f8_c = s16_f8_a - u16_f6_b;
+
+		std::cout << "[          ] A:  " << s16_f8_a.rawBitSet() << " " << s16_f8_a.toDouble() << std::endl;
+		std::cout << "[          ] B:  " << u16_f6_b.rawBitSet() << "  " << u16_f6_b.toDouble() << std::endl;
+		std::cout << "[          ] C:  " << s16_f8_c.rawBitSet() << " " << s16_f8_c.toDouble() << std::endl;
+		std::cout << "[          ]" << std::endl;
+
+		FixedPoint<std::int16_t, 8> s16_f8_d(-23.375);
+		EXPECT_EQ(s16_f8_c, s16_f8_d);
+
+		std::cout << "[          ] U8F4 + S16F12 Subtraction Exact - 8/16 bit - Incompatible" << std::endl;
+		FixedPoint<std::uint8_t, 4> u8_f4_a(1.125);
+		FixedPoint<std::int16_t, 12> s16_f12_a(-0.125);
+		FixedPoint<std::uint8_t, 4> u8_f4_b = u8_f4_a - s16_f12_a;
+
+		std::cout << "[          ] A:          " << u8_f4_a.rawBitSet() << "  " << u8_f4_a.toDouble() << std::endl;
+		std::cout << "[          ] B:  " << s16_f12_a.rawBitSet() << " " << s16_f12_a.toDouble() << std::endl;
+		std::cout << "[          ] C:          " << u8_f4_b.rawBitSet() << "  " << u8_f4_b.toDouble() << std::endl;
+
+		FixedPoint<std::uint8_t, 4> u8_f4_c(1.25);
+		EXPECT_EQ(u8_f4_b, u8_f4_c);
+	}
+
+	TEST(FixedPoint, Multiplication)
+	{
+		std::cout << "[          ] U8F3 * U8F3 Multiplication Exact - 8/8 bit" << std::endl;
+
+		FixedPoint<std::uint8_t, 3> u8_f3_a(1.25);
+		FixedPoint<std::uint8_t, 3> u8_f3_b(2.0);
+		FixedPoint<std::uint8_t, 3> u8_f3_c = u8_f3_a * u8_f3_b;
+		FixedPoint<std::uint8_t, 3> u8_f3_d(2.5);
+
+		std::cout << "[          ] U8F3 A:  " << u8_f3_a.rawBitSet() << "  " << u8_f3_a.toDouble() << std::endl;
+		std::cout << "[          ] U8F3 B:  " << u8_f3_b.rawBitSet() << "  " << u8_f3_b.toDouble() << std::endl;
+		std::cout << "[          ] U8F3 C:  " << u8_f3_c.rawBitSet() << "  " << u8_f3_c.toDouble() << std::endl;
+		std::cout << "[          ] U8F3 D:  " << u8_f3_d.rawBitSet() << "  " << u8_f3_d.toDouble() << std::endl;
+		std::cout << "[          ] " << std::endl;
+
+		EXPECT_EQ(u8_f3_c, u8_f3_d);
+
+		std::cout << "[          ] U8F3 *= U8F3 Multiplication Exact - 8/8 bit" << std::endl;
+
+		std::cout << "[          ] U8F3 A:  " << u8_f3_a.rawBitSet() << "  " << u8_f3_a.toDouble() << " - Pre" << std::endl;
+		std::cout << "[          ] U8F3 B:  " << u8_f3_b.rawBitSet() << "  " << u8_f3_b.toDouble() << std::endl;
+
+		u8_f3_a *= u8_f3_b;
+
+		std::cout << "[          ] U8F3 A:  " << u8_f3_a.rawBitSet() << "  " << u8_f3_a.toDouble() << "  - Post" << std::endl;
+		std::cout << "[          ] " << std::endl;
+
+		EXPECT_EQ(u8_f3_a, u8_f3_c);
+
+		std::cout << "[          ] S8F3 * S8F3 Multiplication Exact - 8/8 bit" << std::endl;
+
+		FixedPoint<std::int8_t, 3> s8_f3_a(-1.25);
+		FixedPoint<std::int8_t, 3> s8_f3_b(2.0);
+		FixedPoint<std::int8_t, 3> s8_f3_c = s8_f3_a * s8_f3_b;
+		FixedPoint<std::int8_t, 3> s8_f3_d(-2.5);
+
+		std::cout << "[          ] S8F3 A:  " << s8_f3_a.rawBitSet() << " " << s8_f3_a.toDouble() << std::endl;
+		std::cout << "[          ] S8F3 B:  " << s8_f3_b.rawBitSet() << "  " << s8_f3_b.toDouble() << std::endl;
+		std::cout << "[          ] S8F3 C:  " << s8_f3_c.rawBitSet() << " " << s8_f3_c.toDouble() << std::endl;
+		std::cout << "[          ] S8F3 D:  " << s8_f3_d.rawBitSet() << " " << s8_f3_d.toDouble() << std::endl;
+
+		EXPECT_EQ(s8_f3_c, s8_f3_d);
+
+		FixedPoint<std::int8_t, 3> s8_f3_e(-2.0);
+		FixedPoint<std::int8_t, 3> s8_f3_f = s8_f3_a * s8_f3_e;
+		FixedPoint<std::int8_t, 3> s8_f3_g(2.5);
+
+		std::cout << "[          ] S8F3 E:  " << s8_f3_e.rawBitSet() << " " << s8_f3_e.toDouble() << std::endl;
+		std::cout << "[          ] S8F3 F:  " << s8_f3_f.rawBitSet() << "  " << s8_f3_f.toDouble() << std::endl;
+		std::cout << "[          ] S8F3 G:  " << s8_f3_g.rawBitSet() << "  " << s8_f3_g.toDouble() << std::endl;
+
+		EXPECT_EQ(s8_f3_f, s8_f3_g);
 	}
 }

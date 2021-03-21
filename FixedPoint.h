@@ -118,18 +118,6 @@ public:
 			: _data(static_cast<T>(value * ONE))
 	{}
 
-	/*!
-		\brief Static function to return the minimum value of the fixed point template
-		\returns A fixed point number corresponding to the minimum value
-	*/
-	static FixedPoint<T, F> min();
-
-	/*!
-		\brief Static function to return the maximum value of the fixed point template
-		\returns A fixed point number corresponding to the maximum value
-	*/
-	static FixedPoint<T, F> max();
-
 	T raw() const { return _data; }
 	void raw(const T& value) { _data = value; }
 
@@ -178,6 +166,11 @@ public:
 	FixedPoint<T, F> operator-(const FixedPoint<U, G>& value) const;
 	FixedPoint operator-(const FixedPoint& rhs) const;
 	FixedPoint& operator-=(const FixedPoint& rhs);
+
+	//template <typename U, std::int8_t G>
+	//FixedPoint<T, F> operator*(const FixedPoint<U, G>& value) const;
+	FixedPoint operator*(const FixedPoint& rhs) const;
+	FixedPoint& operator*=(const FixedPoint& rhs);
 
 	bool operator==(const FixedPoint& rhs) const;
 	bool operator!=(const FixedPoint& rhs) const;
@@ -241,27 +234,8 @@ private:
 	/*!
 		The templated integer number representing the fixed point
 	*/
-	T _data;
+	T _data = 0;
 };
-
-template <typename T, std::int8_t F>
-FixedPoint<T, F> FixedPoint<T, F>::min()
-{
-	if (!S)
-	{
-		return FixedPoint<T, F>(0);
-	}
-
-	/* TODO */
-	return FixedPoint<T, F>(0);
-}
-
-template <typename T, std::int8_t F>
-FixedPoint<T, F> FixedPoint<T, F>::max()
-{
-	/* TODO */
-	return FixedPoint<T, F>(0);
-}
 
 template <typename T, std::int8_t F>
 float FixedPoint<T, F>::resolution() const
@@ -324,7 +298,6 @@ template <typename U, std::int8_t G>
 FixedPoint<T, F> FixedPoint<T, F>::operator+(const FixedPoint<U, G>& value) const
 {
 	static const std::int8_t FRACTION = F - G > 0 ? F : G;
-
 	typedef typename SizeTypeIncrement<T, U>::Type V;
 
 	FixedPoint<V, FRACTION> lhs = this->convert<V, FRACTION>();
@@ -350,14 +323,13 @@ template <typename T, std::int8_t F>
 template <typename U, std::int8_t G>
 FixedPoint<T, F> FixedPoint<T, F>::operator-(const FixedPoint<U, G>& value) const
 {
-	static const std::int8_t FRACTION = F - G > 0 ? F : G;
-
+	static const std::int8_t H = F - G > 0 ? F : G;
 	typedef typename SizeTypeIncrement<T, U>::Type V;
 
-	FixedPoint<V, FRACTION> lhs = this->convert<V, FRACTION>();
-	FixedPoint<V, FRACTION> rhs = value.template convert<V, FRACTION>();
+	FixedPoint<V, H> lhs = this->convert<V, H>();
+	FixedPoint<V, H> rhs = value.template convert<V, H>();
 
-	return FixedPoint<V, FRACTION>::createFixedPoint(lhs.raw() - rhs.raw()).template convert<T, U>();
+	return FixedPoint<V, H>::createFixedPoint(lhs.raw() - rhs.raw()).template convert<T, F>();
 }
 
 template <typename T, std::int8_t F>
@@ -370,6 +342,38 @@ template <typename T, std::int8_t F>
 FixedPoint<T, F>& FixedPoint<T, F>::operator-=(const FixedPoint<T, F>& rhs)
 {
 	_data -= rhs._data;
+	return *this;
+}
+
+template <typename T, std::int8_t F>
+FixedPoint<T, F> FixedPoint<T, F>::operator*(const FixedPoint<T, F>& rhs) const
+{
+	static const std::int8_t G = F + F;
+	typedef typename SizeTypeIncrement<T, T>::Type U;
+
+	FixedPoint<U, G> a;
+	a.raw(U(this->_data));
+	FixedPoint<U, G> b;
+	b.raw(U(rhs._data));
+
+	FixedPoint<U, G> c = FixedPoint<U, G>::createFixedPoint(a.raw() * b.raw());
+
+	return c.template convert<T, F>();
+}
+
+template <typename T, std::int8_t F>
+FixedPoint<T, F>& FixedPoint<T, F>::operator*=(const FixedPoint<T, F>& rhs)
+{
+	static const std::int8_t G = F + F;
+	typedef typename SizeTypeIncrement<T, T>::Type U;
+
+	FixedPoint<U, G> a;
+	a.raw(U(this->_data));
+	FixedPoint<U, G> b;
+	b.raw(U(rhs._data));
+
+	_data = FixedPoint<U, G>::createFixedPoint(a.raw() * b.raw()).template convert<T, F>().raw();
+
 	return *this;
 }
 
@@ -483,9 +487,7 @@ namespace std
 	public:
 		static constexpr FixedPoint<T, F> min() noexcept
 		{
-			FixedPoint<T, F> fixed_point(0);
-			fixed_point.raw(std::numeric_limits<T>::min());
-			return fixed_point;
+			return FixedPoint<T, F>(T(0));
 		}
 
 		static constexpr FixedPoint<T, F> max() noexcept
@@ -495,7 +497,12 @@ namespace std
 			return fixed_point;
 		}
 
-		static constexpr T lowest() noexcept { return min(); }
+		static constexpr FixedPoint<T, F> lowest() noexcept
+		{
+			FixedPoint<T, F> fixed_point(0);
+			fixed_point.raw(std::numeric_limits<T>::min());
+			return fixed_point;
+		}
 
 		static constexpr bool is_specialized = true;
 		static constexpr int  digits = 0;
