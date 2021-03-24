@@ -10,7 +10,11 @@
 #include <iostream>
 #include <cmath>
 
-template <typename T> struct SignedSelector { typedef std::int64_t Type; };
+template <typename T>
+struct SignedSelector
+{
+	typedef std::int64_t Type;
+};
 template <> struct SignedSelector<std::int8_t> { typedef std::uint8_t Type; };
 template <> struct SignedSelector<std::int16_t> { typedef std::uint16_t Type; };
 template <> struct SignedSelector<std::int32_t> { typedef std::uint32_t Type; };
@@ -151,40 +155,31 @@ public:
 	*/
 	std::bitset<sizeof(T) * 8> rawBitSet();
 
-	template<typename U, std::int8_t G>
-	FixedPoint<T, F> operator*(const FixedPoint<U, G>& value) const;
-
 	FixedPoint<T, F>& operator++() { _data += ONE; return *this; }
 	FixedPoint<T, F>& operator--() { _data -= ONE; return *this; }
 
 	template <typename U, std::int8_t G>
-	FixedPoint<T, F> operator+(const FixedPoint<U, G>& value) const;
-	FixedPoint operator+(const FixedPoint& rhs) const;
-	FixedPoint& operator+=(const FixedPoint& rhs);
+	FixedPoint<T, F> operator+(const FixedPoint<U, G>& rhs) const;
 
 	template <typename U, std::int8_t G>
-	FixedPoint<T, F> operator-(const FixedPoint<U, G>& value) const;
-	FixedPoint operator-(const FixedPoint& rhs) const;
-	FixedPoint& operator-=(const FixedPoint& rhs);
+	FixedPoint& operator+=(const FixedPoint<U, G>& rhs);
 
-	//template <typename U, std::int8_t G>
-	//FixedPoint<T, F> operator*(const FixedPoint<U, G>& value) const;
-	FixedPoint operator*(const FixedPoint& rhs) const;
-	FixedPoint& operator*=(const FixedPoint& rhs);
+	template <typename U, std::int8_t G>
+	FixedPoint<T, F> operator-(const FixedPoint<U, G>& rhs) const;
 
-	bool operator==(const FixedPoint& rhs) const;
-	bool operator!=(const FixedPoint& rhs) const;
+	template <typename U, std::int8_t G>
+	FixedPoint<T, F>& operator-=(const FixedPoint<U, G>& rhs);
 
-	bool operator<(const FixedPoint& rhs) const;
-	bool operator>(const FixedPoint& rhs) const;
-	bool operator<=(const FixedPoint& rhs) const;
-	bool operator>=(const FixedPoint& rhs) const;
+	template <typename U, std::int8_t G>
+	FixedPoint<T, F> operator*(const FixedPoint<U, G>& rhs) const;
+
+	template <typename U, std::int8_t G>
+	FixedPoint<T, F>& operator*=(const FixedPoint<U, G>& rhs);
 
 	template <typename U, std::int8_t G>
 	bool operator==(const FixedPoint<U, G>& rhs) const;
 	template <typename U, std::int8_t G>
 	bool operator!=(const FixedPoint<U, G>& rhs) const;
-
 	template <typename U, std::int8_t G>
 	bool operator<(const FixedPoint<U, G>& rhs) const;
 	template <typename U, std::int8_t G>
@@ -267,22 +262,13 @@ T FixedPoint<T, F>::bitMask()
 {
 	if (S)
 	{
-		typename SignedSelector<T>::Type mask = std::numeric_limits<T>::max();
-		mask = std::numeric_limits<typename SignedSelector<T>::Type>::max();
+		typename SignedSelector<T>::Type mask =
+				std::numeric_limits<typename SignedSelector<T>::Type>::max();
 		return mask >> ((sizeof(typename SignedSelector<T>::Type) * 8) - F);
 	}
 
 	T mask = std::numeric_limits<T>::max();
 	return mask >> ((sizeof(T) * 8) - F);
-}
-
-template <typename T, std::int8_t F>
-template <typename U, std::int8_t G>
-FixedPoint<T, F> FixedPoint<T, F>::operator*(const FixedPoint<U, G>& value) const
-{
-	FixedPoint<typename SizeTypeIncrement<T, U>::Type, F + G> intermediate;
-	intermediate = FixedPoint<typename SizeTypeIncrement<T, U>::Type, F + G>::createFixedPoint(_data * value.raw());
-	return intermediate.template convert<T, F>();
 }
 
 template <typename T, std::int8_t F>
@@ -295,84 +281,99 @@ FixedPoint<T, F> FixedPoint<T, F>::createFixedPoint(T data)
 
 template <typename T, std::int8_t F>
 template <typename U, std::int8_t G>
-FixedPoint<T, F> FixedPoint<T, F>::operator+(const FixedPoint<U, G>& value) const
+FixedPoint<T, F> FixedPoint<T, F>::operator+(const FixedPoint<U, G>& rhs) const
 {
+	if (std::is_same<T, U>::value)
+	{
+		return FixedPoint<T, F>::createFixedPoint(this->_data + rhs.raw());
+	}
+
 	static const std::int8_t FRACTION = F - G > 0 ? F : G;
 	typedef typename SizeTypeIncrement<T, U>::Type V;
 
-	FixedPoint<V, FRACTION> lhs = this->convert<V, FRACTION>();
-	FixedPoint<V, FRACTION> rhs = value.template convert<V, FRACTION>();
+	FixedPoint<V, FRACTION> lhs_converted = this->convert<V, FRACTION>();
+	FixedPoint<V, FRACTION> rhs_converted = rhs.template convert<V, FRACTION>();
 
-	return FixedPoint<V, FRACTION>::createFixedPoint(lhs.raw() + rhs.raw()).template convert<T, F>();
+	return FixedPoint<V, FRACTION>::createFixedPoint(lhs_converted.raw() + rhs_converted.raw()).template convert<T, F>();
 }
 
 template <typename T, std::int8_t F>
-FixedPoint<T, F> FixedPoint<T, F>::operator+(const FixedPoint<T, F>& rhs) const
+template <typename U, std::int8_t G>
+FixedPoint<T, F>& FixedPoint<T, F>::operator+=(const FixedPoint<U, G>& rhs)
 {
-	return FixedPoint<T, F>::createFixedPoint(this->_data + rhs._data);
-}
+	if (std::is_same<T, U>::value)
+	{
+		_data += rhs._data;
+		return *this;
+	}
 
-template <typename T, std::int8_t F>
-FixedPoint<T, F>& FixedPoint<T, F>::operator+=(const FixedPoint<T, F>& rhs)
-{
-	_data += rhs._data;
+	_data += rhs.template convert<T, F>().raw();
 	return *this;
 }
 
 template <typename T, std::int8_t F>
 template <typename U, std::int8_t G>
-FixedPoint<T, F> FixedPoint<T, F>::operator-(const FixedPoint<U, G>& value) const
+FixedPoint<T, F> FixedPoint<T, F>::operator-(const FixedPoint<U, G>& rhs) const
 {
+	if (std::is_same<T,U>::value)
+	{
+		return FixedPoint<T, F>::createFixedPoint(this->_data - rhs.raw());
+	}
+
 	static const std::int8_t H = F - G > 0 ? F : G;
 	typedef typename SizeTypeIncrement<T, U>::Type V;
 
-	FixedPoint<V, H> lhs = this->convert<V, H>();
-	FixedPoint<V, H> rhs = value.template convert<V, H>();
+	FixedPoint<V, H> lhs_converted = this->convert<V, H>();
+	FixedPoint<V, H> rhs_converted = rhs.template convert<V, H>();
 
-	return FixedPoint<V, H>::createFixedPoint(lhs.raw() - rhs.raw()).template convert<T, F>();
+	return FixedPoint<V, H>::createFixedPoint(lhs_converted.raw() - rhs_converted.raw()).template convert<T, F>();
 }
 
 template <typename T, std::int8_t F>
-FixedPoint<T, F> FixedPoint<T, F>::operator-(const FixedPoint<T, F>& rhs) const
+template <typename U, std::int8_t G>
+FixedPoint<T, F>& FixedPoint<T, F>::operator-=(const FixedPoint<U, G>& rhs)
 {
-	return FixedPoint<T, F>::createFixedPoint(this->_data - rhs._data);
-}
+	if (std::is_same<T, U>::value)
+	{
+		_data -= rhs._data;
+		return *this;
+	}
 
-template <typename T, std::int8_t F>
-FixedPoint<T, F>& FixedPoint<T, F>::operator-=(const FixedPoint<T, F>& rhs)
-{
-	_data -= rhs._data;
+	_data -= rhs.template convert<T, F>().raw();
 	return *this;
 }
 
 template <typename T, std::int8_t F>
-FixedPoint<T, F> FixedPoint<T, F>::operator*(const FixedPoint<T, F>& rhs) const
+template <typename U, std::int8_t G>
+FixedPoint<T, F> FixedPoint<T, F>::operator*(const FixedPoint<U, G>& rhs) const
 {
-	static const std::int8_t G = F + F;
-	typedef typename SizeTypeIncrement<T, T>::Type U;
+	static const std::int8_t H = F + G;
+	typedef typename SizeTypeIncrement<T, T>::Type V;
 
-	FixedPoint<U, G> a;
-	a.raw(U(this->_data));
-	FixedPoint<U, G> b;
-	b.raw(U(rhs._data));
+	FixedPoint<V, H> a;
+	a.raw(V(this->_data));
 
-	FixedPoint<U, G> c = FixedPoint<U, G>::createFixedPoint(a.raw() * b.raw());
+	FixedPoint<V, H> b;
+	b.raw(V(rhs._data));
+
+	FixedPoint<V, H> c = FixedPoint<V, H>::createFixedPoint(a.raw() * b.raw());
 
 	return c.template convert<T, F>();
 }
 
 template <typename T, std::int8_t F>
-FixedPoint<T, F>& FixedPoint<T, F>::operator*=(const FixedPoint<T, F>& rhs)
+template <typename U, std::int8_t G>
+FixedPoint<T, F>& FixedPoint<T, F>::operator*=(const FixedPoint<U, G>& rhs)
 {
-	static const std::int8_t G = F + F;
-	typedef typename SizeTypeIncrement<T, T>::Type U;
+	static const std::int8_t H = F + G;
+	typedef typename SizeTypeIncrement<T, U>::Type V;
 
-	FixedPoint<U, G> a;
-	a.raw(U(this->_data));
-	FixedPoint<U, G> b;
-	b.raw(U(rhs._data));
+	FixedPoint<V, H> a;
+	a.raw(V(this->_data));
+	FixedPoint<V, H> b;
+	b.raw(V(rhs.raw()));
 
-	_data = FixedPoint<U, G>::createFixedPoint(a.raw() * b.raw()).template convert<T, F>().raw();
+	_data = FixedPoint<V, H>::createFixedPoint(a.raw() * b.raw()).template convert<T, F>().raw();
 
 	return *this;
 }
@@ -402,81 +403,75 @@ J FixedPoint<T, F>::convertType(const I& initial, std::int8_t shift)
 }
 
 template<typename T, std::int8_t F>
-bool FixedPoint<T, F>::operator==(const FixedPoint& rhs) const
-{
-	return _data == rhs._data;
-}
-
-template<typename T, std::int8_t F>
-bool FixedPoint<T, F>::operator!=(const FixedPoint& rhs) const
-{
-	return _data != rhs._data;
-}
-
-template<typename T, std::int8_t F>
-bool FixedPoint<T, F>::operator<(const FixedPoint& rhs) const
-{
-	return _data < rhs._data;
-}
-
-template<typename T, std::int8_t F>
-bool FixedPoint<T, F>::operator>(const FixedPoint& rhs) const
-{
-	return _data > rhs._data;
-}
-
-template<typename T, std::int8_t F>
-bool FixedPoint<T, F>::operator<=(const FixedPoint& rhs) const
-{
-	return _data <= rhs._data;
-}
-
-template<typename T, std::int8_t F>
-bool FixedPoint<T, F>::operator>=(const FixedPoint& rhs) const
-{
-	return _data >= rhs._data;
-}
-
-template<typename T, std::int8_t F>
 template<typename U, std::int8_t G>
 bool FixedPoint<T, F>::operator==(const FixedPoint<U, G>& rhs) const
 {
-	return _data == rhs.template convert<T, F>()._data;
+	if (std::is_same<T, U>::value)
+	{
+		return _data == rhs.raw();
+	}
+
+	return _data == rhs.template convert<T, F>().raw();
 }
 
 template<typename T, std::int8_t F>
 template<typename U, std::int8_t G>
 bool FixedPoint<T, F>::operator!=(const FixedPoint<U, G>& rhs) const
 {
-	return _data != rhs.template convert<T, F>()._data;
+	if (std::is_same<T, U>::value)
+	{
+		return _data != rhs.raw();
+	}
+
+	return _data != rhs.template convert<T, F>().raw();
 }
 
 template<typename T, std::int8_t F>
 template<typename U, std::int8_t G>
 bool FixedPoint<T, F>::operator<(const FixedPoint<U, G>& rhs) const
 {
-	return _data < rhs.template convert<T, F>()._data;
+	if (std::is_same<T, U>::value)
+	{
+		return _data < rhs.raw();
+	}
+
+	return _data < rhs.template convert<T, F>().raw();
 }
 
 template<typename T, std::int8_t F>
 template<typename U, std::int8_t G>
 bool FixedPoint<T, F>::operator>(const FixedPoint<U, G>& rhs) const
 {
-	return _data > rhs.template convert<T, F>()._data;
+	if (std::is_same<T, U>::value)
+	{
+		return _data > rhs.raw();
+	}
+
+	return _data > rhs.template convert<T, F>().raw();
 }
 
 template<typename T, std::int8_t F>
 template<typename U, std::int8_t G>
 bool FixedPoint<T, F>::operator<=(const FixedPoint<U, G>& rhs) const
 {
-	return _data <= rhs.template convert<T, F>()._data;
+	if (std::is_same<T, U>::value)
+	{
+		return _data <= rhs.raw();
+	}
+
+	return _data <= rhs.template convert<T, F>().raw();
 }
 
 template<typename T, std::int8_t F>
 template<typename U, std::int8_t G>
 bool FixedPoint<T, F>::operator>=(const FixedPoint<U, G>& rhs) const
 {
-	return _data >= rhs.template convert<T, F>()._data;
+	if (std::is_same<T, U>::value)
+	{
+		return _data >= rhs.raw();
+	}
+
+	return _data >= rhs.template convert<T, F>().raw();
 }
 
 namespace std
